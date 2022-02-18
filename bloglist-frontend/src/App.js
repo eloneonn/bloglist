@@ -1,23 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import './index.css'
 import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
     const dispatch = useDispatch()
+    const blogs = useSelector(state => (state.blogs))
 
-    const [blogs, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
-
-    const blogFormRef = useRef()
 
     useEffect(() => {
         //check if user is already logged in
@@ -28,9 +26,9 @@ const App = () => {
             setUser(user)
             blogService.setToken(user.token)
 
-            getBlogs()
+            dispatch(initializeBlogs())
         }
-    }, [])
+    }, [dispatch])
 
     const handleLogin = async (event) => {
         event.preventDefault()
@@ -50,7 +48,7 @@ const App = () => {
             console.log('User logged in:', user)
             setUsername('')
             setPassword('')
-            getBlogs()
+            dispatch(initializeBlogs())
             dispatch(setNotification('login succesful!', 4))
         } catch (exception) {
             dispatch(setNotification('wrong username or password', 4))
@@ -61,46 +59,6 @@ const App = () => {
         window.localStorage.removeItem('loggedUser')
         setUser(null)
         dispatch(setNotification('logged out!', 4))
-    }
-
-    const createBlog = async (blogObject) => {
-        await blogService.create(blogObject)
-
-        blogFormRef.current.toggleVisibility()
-        dispatch(
-            setNotification(
-                `a new blog "${blogObject.title}" by ${blogObject.author} has been added!`,
-                4
-            )
-        )
-        getBlogs()
-    }
-
-    const removeBlog = async (blog) => {
-        await blogService.remove(blog.id)
-        dispatch(
-            setNotification(
-                `Blog "${blog.title}" by ${blog.author} has been removed`,
-                4
-            )
-        )
-
-        getBlogs()
-    }
-
-    const likeBlog = async (blog, likes) => {
-        blog.likes = likes
-        blogService.update(blog.id, blog)
-    }
-
-    const getBlogs = async () => {
-        const blogs = await blogService.getAll()
-
-        setBlogs(
-            blogs.sort(function (a, b) {
-                return b.likes - a.likes
-            })
-        )
     }
 
     // rendering components
@@ -136,12 +94,7 @@ const App = () => {
     const blogList = () => (
         <div id="blogList">
             {blogs.map((blog) => (
-                <Blog
-                    key={blog.id}
-                    blog={blog}
-                    removeBlog={removeBlog}
-                    likeBlog={likeBlog}
-                />
+                <Blog blog={blog} key={blog.id}/>
             ))}
         </div>
     )
@@ -163,12 +116,7 @@ const App = () => {
                             <button onClick={handleLogout}>logout</button>
                         </p>
                         {blogList()}
-                        <Togglable
-                            buttonLabel="Create new blog"
-                            ref={blogFormRef}
-                        >
-                            <BlogForm createBlog={createBlog} />
-                        </Togglable>
+                        <BlogForm />
                     </div>
                 )}
             </div>

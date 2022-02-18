@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { like, removeBlog } from '../reducers/blogReducer'
 
 const Blog = (props) => {
     const blog = props.blog
+    const dispatch = useDispatch()
 
     const [completeInfo, showCompleteInfo] = useState(false)
-    const [likes, setLikes] = useState(blog.likes)
 
     // tämä on tässä koska JSON.parse(window.localStorage.getItem('loggedUser')).name aiheuttaa frontin testeissä ongelman (cannot read properties of null)
     // oikeassa tilanteessa tämä ei kuitenkaan koskaan ole null koska kirjautumaton käyttäjä ei näe blogeja
@@ -16,13 +18,8 @@ const Blog = (props) => {
 
     const handleRemove = () => {
         if (window.confirm(`Remove "${blog.title}" by ${blog.author}?`)) {
-            props.removeBlog(blog)
+            dispatch(removeBlog(blog))
         }
-    }
-
-    const handleLike = async () => {
-        await props.likeBlog(blog, likes + 1)
-        setLikes(likes + 1)
     }
 
     return (
@@ -40,8 +37,8 @@ const Blog = (props) => {
                 <div className="blog-content">
                     <div>
                         {blog.url} <br></br>
-                        likes: {likes}{' '}
-                        <button onClick={handleLike} id="like-button">
+                        likes: {blog.likes}{' '}
+                        <button onClick={() => dispatch(like(blog))} id="like-button">
                             like
                         </button>{' '}
                         <br></br>
@@ -61,7 +58,7 @@ const Blog = (props) => {
         </div>
     )
 }
-/* !OIKEA POISTONAPPI!!!
+/* !PAREMPI POISTONAPPI!!!
 {blog.author === JSON.parse(window.localStorage.getItem('loggedUser')).name ?
 <button onClick={handleRemove}>remove</button> : <button disabled>remove</button>
 }
