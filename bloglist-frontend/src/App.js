@@ -106,7 +106,7 @@ const App = () => {
     // rendering components
 
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} autoComplete="off">
             <div>
                 <h2>Log in to application</h2>
                 Username: <br></br>
