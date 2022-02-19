@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import { initializeUser, logout } from './reducers/userReducer'
 import BlogList from './components/BlogList'
+import UserList from './components/UserList'
+import UserView from './components/UserView'
+//import { Route, Link, Routes } from 'react-router-dom'
 
 const App = () => {
     const dispatch = useDispatch()
@@ -28,6 +31,8 @@ const App = () => {
                         {user.name} logged in{' '}
                         <button onClick={() => dispatch(logout())}>logout</button>
                     </p>
+                    <UserList />
+                    <UserView />
                     <BlogList />
                     <BlogForm />
                 </div>

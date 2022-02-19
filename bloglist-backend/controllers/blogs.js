@@ -8,6 +8,7 @@ blogsRouter.get('', async (request, response) => {
 
 blogsRouter.post('', async (request, response, next) => {
     const user = request.user
+    console.log(user);
 
     if (!request.token || !user._id) {
         return response.status(401).json({ error: 'token missing or invalid'})
@@ -23,9 +24,11 @@ blogsRouter.post('', async (request, response, next) => {
 
     if(request.body.hasOwnProperty('title') && request.body.hasOwnProperty('url')) {
         const savedBlog = await blog.save()
+        console.log(savedBlog._id);
         user.blogs = user.blogs.concat(savedBlog._id)
+        console.log(user);
 
-        await User.findByIdAndUpdate(request.body.userId, user)
+        await User.findByIdAndUpdate(user._id, user)
 //        await user.save() aiheuttaa validaatiovirheen. findByIdAndUpdate() toimii vaikkei ehkä ole paras ratkaisu
 
         response.status(201).json(savedBlog.toJSON())
