@@ -24,9 +24,7 @@ blogsRouter.post('', async (request, response, next) => {
 
     if(request.body.hasOwnProperty('title') && request.body.hasOwnProperty('url')) {
         const savedBlog = await blog.save()
-        console.log(savedBlog._id);
         user.blogs = user.blogs.concat(savedBlog._id)
-        console.log(user);
 
         await User.findByIdAndUpdate(user._id, user)
 //        await user.save() aiheuttaa validaatiovirheen. findByIdAndUpdate() toimii vaikkei ehkä ole paras ratkaisu
