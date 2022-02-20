@@ -16,7 +16,7 @@ const blogSlice = createSlice({
         },
         setBlogs(state, action) {
             return action.payload.sort(function(a, b){return b.likes - a.likes})
-        },
+        }
     }
 })
 
@@ -36,6 +36,14 @@ export const like = (blog) => {
         dispatch(addLike(likedObj))
 
         await blogService.update(likedObj.id, likedObj)
+    }
+}
+
+export const addComment = (id, comment) => {
+    return async dispatch => {
+        await blogService.comment(id, comment)
+
+        dispatch(initializeBlogs())
     }
 }
 

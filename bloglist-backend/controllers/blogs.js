@@ -8,9 +8,10 @@ blogsRouter.get('', async (request, response) => {
 
 blogsRouter.post('', async (request, response, next) => {
     const user = request.user
+
     console.log(user);
 
-    if (!request.token || !user._id) {
+    if (!request.token || !user.id) {
         return response.status(401).json({ error: 'token missing or invalid'})
     }
 
@@ -35,6 +36,18 @@ blogsRouter.post('', async (request, response, next) => {
     }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+
+    console.log(request.body);
+
+    const newComments = blog.comments.push(request.body.comment)
+    const newBlog = {...blog, comments: newComments}
+
+    response.json(await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true }))
+
+})
+
 blogsRouter.put('/:id', async (request, response) => {
     const newBlog = {
         title: request.body.title,
@@ -54,10 +67,16 @@ blogsRouter.delete('/:id', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
 
     if ( blog.user.toString() === request.user.id.toString() ) {
+
         await Blog.findByIdAndRemove(request.params.id)
+
+
+
 
         /**  TODO poistetun blogin id:n poisto käyttäjä-olion blogs-listalta
         
+
+
         const newBlogs = request.user.blogs.filter(b => b.toString !== request.params.id)
         
         request.user.blogs = newBlogs

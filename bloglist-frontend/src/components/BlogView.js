@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { like } from '../reducers/blogReducer';
+import { like, addComment } from '../reducers/blogReducer';
 
 const BlogView = ({ blog }) => {
     const dispatch = useDispatch()
+
+    const [comment, setComment] = useState('')
     
     if (!blog) {
         return null
     }
 
-    console.log('Viewing blog:', blog);
+    const handleComment = (event) => {
+        event.preventDefault()
+        dispatch(addComment(blog.id, comment))
+        setComment('')
+    }
 
     return (
         <div id='BlogView'>
@@ -20,6 +26,22 @@ const BlogView = ({ blog }) => {
                 like
             </button> <br></br>
             added by {blog.user.name}
+            <h3>comments</h3>
+
+            <input
+                id='comment'
+                value={comment}
+                onChange={({ target }) => setComment(target.value)}
+            ></input>
+
+            <button onClick={handleComment}>add comment</button> <br></br>
+
+
+            <ul>
+                {blog.comments.map(comment => (
+                    <li key={comment}>{comment}</li>
+                ))}
+            </ul>
         </div>
     )
 }
