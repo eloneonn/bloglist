@@ -11,6 +11,7 @@ const UserList = () => {
         dispatch(initializeUsers())
     }, [dispatch]);
 
+
     // TODO listan päivittyimen realtime
 
     return (
