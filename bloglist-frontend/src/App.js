@@ -4,12 +4,13 @@ import './index.css'
 import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
-import { initializeUser, logout } from './reducers/userReducer'
+import { initializeUser } from './reducers/userReducer'
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
 import UserView from './components/UserView'
-import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import BlogView from './components/BlogView'
+import Navigation from './components/Navigation'
 
 const App = () => {
     const dispatch = useDispatch()
@@ -37,30 +38,28 @@ const App = () => {
 
     return (
         <div>
-            <h1>Bloglist</h1>
-            <Notification />
             {user === null ? (
-                <LoginForm />
+                <div className='container'>
+                    <h1>Bloglist</h1>
+                    <Notification />
+                    <LoginForm />
+                </div>
             ) : (
                 <div>
+                    <Navigation></Navigation>
+                    <Notification />
 
-                    <h2>Blogs</h2>
-                    <p>
-                        {user.name} logged in{' '}
-                        <button onClick={() => dispatch(logout())}>logout</button>
-                    </p>
+                    <div className='container'>
 
-                    <div> 
-                        <Link to='/'>blogs</Link>
-                        <Link to='users'>users</Link>
+                        <h1>Bloglist</h1>
+
+                        <Routes>
+                            <Route path='/' element={<div><BlogList /> <BlogForm /></div>} />
+                            <Route path='users' element={<UserList />}/>
+                            <Route path='users/:id' element={<UserView user={userToShow}/>} /> 
+                            <Route path='blogs/:id' element={<BlogView blog={blogToShow}/>} />                       
+                        </Routes>
                     </div>
-
-                    <Routes>
-                        <Route path='/' element={<div><BlogList /> <BlogForm /></div>} />
-                        <Route path='users' element={<UserList />}/>
-                        <Route path='users/:id' element={<UserView user={userToShow}/>} /> 
-                        <Route path='blogs/:id' element={<BlogView blog={blogToShow}/>} />                       
-                    </Routes>
                 </div>
 
             )}
