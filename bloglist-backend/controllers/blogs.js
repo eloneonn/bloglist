@@ -9,8 +9,6 @@ blogsRouter.get('', async (request, response) => {
 blogsRouter.post('', async (request, response, next) => {
     const user = request.user
 
-    console.log(user);
-
     if (!request.token || !user.id) {
         return response.status(401).json({ error: 'token missing or invalid'})
     }
@@ -38,8 +36,6 @@ blogsRouter.post('', async (request, response, next) => {
 
 blogsRouter.post('/:id/comments', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
-
-    console.log(request.body);
 
     const newComments = blog.comments.push(request.body.comment)
     const newBlog = {...blog, comments: newComments}

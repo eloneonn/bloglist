@@ -9,10 +9,10 @@ const Navigation = () => {
 
     return (
         <ul id='navigation' className="navigation">
-            <li className="navigation-item"><Link to='/'>blogs</Link></li>
-            <li className="navigation-item"><Link to='users'>users</Link></li>
-            <li className="navigation-item" style={{ color: 'grey'}}>{user.name} logged in{' '}</li>
-            <li className="navigation-item"><button onClick={() => dispatch(logout())}>logout</button></li>
+            <Link to='/'><li><b>BLOGS</b></li></Link>
+            <Link to='users'><li><b>USERS</b></li></Link>
+            <li style={{ color: 'grey'}} className='noHover'>{user.name} logged in{' '}</li>
+            <li onClick={() => dispatch(logout())} style={{ cursor: 'pointer'  }}><b>LOG OUT</b></li>
         </ul>
     )
 }

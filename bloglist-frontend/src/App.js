@@ -46,7 +46,7 @@ const App = () => {
                 </div>
             ) : (
                 <div>
-                    <Navigation></Navigation>
+                    <Navigation />
                     <Notification />
 
                     <div className='container'>
